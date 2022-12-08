@@ -63,4 +63,3 @@ CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
-INSTALLED_APPS += ["tento_shop_project.core"]
