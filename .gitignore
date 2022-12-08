@@ -275,3 +275,4 @@ tento_shop_project/media/
 
 .pytest_cache/
 .env
+.vscode/settings.json
