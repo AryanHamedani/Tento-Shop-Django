@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractUser):
@@ -27,11 +28,17 @@ class Profile(models.Model):
         FEMALE = 1, _("Female")
         NONE = 2, _("None of binary")
 
-    owner = models.ForeignKey(
+    owner = models.OneToOneField(
         User, verbose_name=_("Profile Owner"), on_delete=models.CASCADE
     )
     first_name = models.CharField(_("First Name"), max_length=50, blank=False)
     last_name = models.CharField(_("Last Name"), max_length=50, blank=False)
     gender = models.IntegerField(
         _("Gender"), choices=Gender.choices, blank=True, null=True
+    )
+    phone = PhoneNumberField(
+        region="IR", blank=True, null=True, unique=True, verbose_name=_("Phone Number")
+    )
+    national_code = models.CharField(
+        _("National Code"), max_length=12, blank=True, null=True, unique=True
     )
