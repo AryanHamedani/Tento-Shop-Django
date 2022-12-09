@@ -41,6 +41,7 @@ class SoftDeletableModel(models.Model):
     """
 
     is_removed = models.BooleanField(default=False)
+    # is index true
 
     class Meta:
         abstract = True
@@ -62,6 +63,7 @@ class SoftDeletableModel(models.Model):
 
 
 class TimeStampedModel(models.Model):
+    # be mixin
     """
     An abstract base class model that provides self-updating
     ``created`` and ``modified`` fields.

@@ -8,7 +8,7 @@ from tento_shop_project.core.models import SoftDeletableModel, TimeStampedModel
 class Category(models.Model):
     name = models.CharField(_("Category Name"), max_length=50)
     parent = models.ForeignKey(
-        "products.Category",
+        "self",
         verbose_name=_("Parent Category"),
         on_delete=models.CASCADE,
         null=True,

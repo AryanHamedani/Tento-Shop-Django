@@ -12,7 +12,6 @@ class Order(TimeStampedModel):
         User, verbose_name=_("Order Owner"), on_delete=models.CASCADE
     )
     description = models.TextField(_("Order Description"))
-    order_date = models.DateTimeField(_("Order Date"), auto_now_add=True)
     total_price = models.DecimalField(_("Total Price"), max_digits=10, decimal_places=0)
 
 
