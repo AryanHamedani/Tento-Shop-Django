@@ -24,4 +24,7 @@ class DiscountCode(models.Model):
     code = models.UUIDField(_("Discount Code"))
     rate = models.PositiveSmallIntegerField(_("Discount Percentage"))
     max_amount = models.PositiveIntegerField(_("Discount Max Amount"))
-    available_to = models.ManyToManyField(User, verbose_name=_("Useable by"))
+    available_to = models.ManyToManyField(
+        User,
+        verbose_name=_("Useable by"),
+    )
