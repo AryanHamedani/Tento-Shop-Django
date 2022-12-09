@@ -1,13 +1,14 @@
 from django.db import models  # noqa F401
 from django.utils.translation import gettext_lazy as _
 
+from tento_shop_project.core.models import TimeStampedModel
 from tento_shop_project.products.models import ProductItem
 from tento_shop_project.users.models import User
 
 # Create your models here.
 
 
-class Review(models.Model):
+class Review(TimeStampedModel):
     owner = models.ForeignKey(
         User, verbose_name=_("Reviewer"), on_delete=models.CASCADE
     )

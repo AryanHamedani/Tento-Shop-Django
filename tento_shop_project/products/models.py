@@ -1,6 +1,8 @@
 from django.db import models  # noqa F401
 from django.utils.translation import gettext_lazy as _
 
+from tento_shop_project.core.models import SoftDeletableModel, TimeStampedModel
+
 
 # Create your models here.
 class Category(models.Model):
@@ -16,12 +18,10 @@ class Category(models.Model):
 
 class Brand(models.Model):
     name = models.CharField(_("Brand Name"), max_length=50)
-    logo = models.ImageField(
-        _("Brand Logo"), upload_to="brand_logos", height_field=500, width_field=500
-    )
+    logo = models.ImageField(_("Brand Logo"), upload_to="brand_logos")
 
 
-class Product(models.Model):
+class Product(SoftDeletableModel, TimeStampedModel):
     category = models.ForeignKey(
         Category, verbose_name=_("Product Category"), on_delete=models.CASCADE
     )
