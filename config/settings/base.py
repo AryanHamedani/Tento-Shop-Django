@@ -43,6 +43,7 @@ DATABASES = {
     "default": env.db(
         "DATABASE_URL",
         default="postgres:///tento_shop_project",
+        engine="django.contrib.gis.db.backends.postgis",
     ),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
@@ -65,6 +66,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis",
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
@@ -80,6 +82,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "phonenumber_field",
 ]
 
 LOCAL_APPS = [
