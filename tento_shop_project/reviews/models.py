@@ -5,16 +5,22 @@ from tento_shop_project.core.models import TimeStampedModel
 from tento_shop_project.products.models import ProductItem
 from tento_shop_project.users.models import User
 
-# Create your models here.
-
 
 class Review(TimeStampedModel):
     owner = models.ForeignKey(
-        User, verbose_name=_("Reviewer"), on_delete=models.CASCADE
+        User,
+        verbose_name=_("Reviewer"),
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
     )
     product = models.ForeignKey(
-        ProductItem, verbose_name=_("Reviewed Product"), on_delete=models.CASCADE
+        ProductItem,
+        verbose_name=_("Reviewed Product"),
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
     )
-    rate = models.PositiveSmallIntegerField(_("Rate (from 10)"))
-    title = models.CharField(_("Review Title"), max_length=100)
-    context = models.TextField(_("Review Context"))
+    rate = models.PositiveSmallIntegerField(_("Rate (from 5)"), blank=False, null=False)
+    title = models.CharField(_("Review Title"), max_length=100, blank=False, null=False)
+    context = models.TextField(_("Review Context"), blank=False, null=False)
