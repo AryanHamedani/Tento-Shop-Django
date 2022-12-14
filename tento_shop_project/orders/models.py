@@ -1,18 +1,44 @@
 from django.db import models  # noqa F401
 from django.utils.translation import gettext_lazy as _
+from model_utils import Choices
+from model_utils.fields import MonitorField, StatusField
+from model_utils.models import TimeStampedModel
 
-from tento_shop_project.core.models import TimeStampedModel
 from tento_shop_project.products.models import ProductItem
 from tento_shop_project.users.models import User
 
 
 # Create your models here.
 class Order(TimeStampedModel):
+    STATUS = Choices(
+        (0, "PENDING", _("Pending for payment")),
+        (1, "SUBMITTED", _("Order paid and submitted")),
+        (2, "SUCCESS", _("Customer received order successfully")),
+    )
     owner = models.ForeignKey(
         User, verbose_name=_("Order Owner"), on_delete=models.CASCADE
     )
+    status = StatusField(verbose_name=_("Order Status"))
+    status_changed = MonitorField(
+        verbose_name=_("Order status change date"), monitor="status"
+    )
     description = models.TextField(_("Order Description"))
-    total_price = models.DecimalField(_("Total Price"), max_digits=10, decimal_places=0)
+    total_price = models.DecimalField(
+        _("Total Price"),
+        max_digits=10,
+        decimal_places=0,
+        blank=False,
+        null=False,
+        default=0,
+    )
+    final_price = models.DecimalField(
+        _("Final Price"),
+        max_digits=10,
+        decimal_places=0,
+        blank=False,
+        null=False,
+        default=0,
+    )
 
 
 class OrderLine(models.Model):
@@ -20,7 +46,14 @@ class OrderLine(models.Model):
     item = models.ForeignKey(
         ProductItem, verbose_name=_("Product Item"), on_delete=models.CASCADE
     )
-    price = models.DecimalField(_("Price"), max_digits=10, decimal_places=0)
+    price = models.DecimalField(
+        _("Price"),
+        max_digits=10,
+        decimal_places=0,
+        blank=False,
+        null=False,
+        default=0,
+    )
     quantity = models.PositiveIntegerField(
         _("Ordered Quantity"), blank=False, null=False
     )
