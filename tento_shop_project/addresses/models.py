@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from model_utils.models import AddressModel
 
+from tento_shop_project.core.models import AddressModel
 from tento_shop_project.users.models import User
 
 

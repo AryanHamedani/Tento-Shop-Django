@@ -1,7 +1,7 @@
 from django.db import models  # noqa F401
 from django.utils.translation import gettext_lazy as _
+from model_utils.models import TimeStampedModel
 
-from tento_shop_project.core.models import TimeStampedModel
 from tento_shop_project.products.models import ProductItem
 from tento_shop_project.users.models import User
 
