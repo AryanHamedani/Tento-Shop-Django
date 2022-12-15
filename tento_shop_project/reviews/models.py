@@ -2,7 +2,7 @@ from django.db import models  # noqa F401
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
-from tento_shop_project.products.models import ProductItem
+from tento_shop_project.products.models import Product
 from tento_shop_project.users.models import User
 
 
@@ -15,8 +15,8 @@ class Review(TimeStampedModel):
         null=False,
     )
     product = models.ForeignKey(
-        ProductItem,
-        verbose_name=_("Reviewed Product"),
+        Product,
+        verbose_name=_("Product"),
         on_delete=models.CASCADE,
         blank=False,
         null=False,

@@ -87,12 +87,13 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "tento_shop_project.users",
-    "tento_shop_project.addresses",
-    "tento_shop_project.products",
-    "tento_shop_project.core",
-    "tento_shop_project.orders",
-    "tento_shop_project.reviews",
-    "tento_shop_project.promotions",
+    "tento_shop_project.shops"
+    # "tento_shop_project.addresses",
+    # "tento_shop_project.products",
+    # "tento_shop_project.core",
+    # "tento_shop_project.orders",
+    # "tento_shop_project.reviews",
+    # "tento_shop_project.promotions",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
