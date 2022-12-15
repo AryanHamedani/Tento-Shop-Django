@@ -18,9 +18,6 @@ urlpatterns = [
     path("users/", include("tento_shop_project.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path(
-        "products/", include("tento_shop_project.products.urls", namespace="products")
-    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
