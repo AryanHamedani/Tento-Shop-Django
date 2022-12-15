@@ -87,7 +87,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "tento_shop_project.users",
-    "tento_shop_project.shops"
+    "tento_shop_project.shop"
     # "tento_shop_project.addresses",
     # "tento_shop_project.products",
     # "tento_shop_project.core",
