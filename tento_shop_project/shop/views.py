@@ -7,7 +7,7 @@ from .models import Category, Product
 
 class ProductListView(generic.ListView):
     template_name = "shop/product/list.html"
-    context_object_name = "products"
+    context_object_name = "product_list"
 
     def get_queryset(self):
         self.category = None
@@ -27,3 +27,8 @@ class ProductListView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["categories"] = self.categories
         context["category"] = self.category
+
+
+class ProductDetailView(generic.DeleteView):
+    model = Product
+    template_name = "shop/product/detail.html"
