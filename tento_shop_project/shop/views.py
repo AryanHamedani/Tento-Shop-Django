@@ -32,3 +32,8 @@ class ProductListView(generic.ListView):
 class ProductDetailView(generic.DeleteView):
     model = Product
     template_name = "shop/product/detail.html"
+
+    def get_queryset(self):
+        self.product = get_object_or_404(
+            Product, id=self.kwargs["id"], slug=self.kwargs["slug"], available=True
+        )
