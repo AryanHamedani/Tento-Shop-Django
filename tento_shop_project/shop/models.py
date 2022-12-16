@@ -3,6 +3,8 @@ from django.urls import reverse  # noqa F401
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
 
+from .managers import SubCategoriesManager
+
 
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=200, blank=False, null=False)
@@ -17,6 +19,7 @@ class Category(models.Model):
     slug = models.SlugField(
         _("Slug"), unique=True, blank=False, null=False, max_length=200
     )
+    sub_categories = SubCategoriesManager()
 
     class Meta:
         ordering = ["name"]
