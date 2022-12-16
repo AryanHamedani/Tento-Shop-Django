@@ -12,6 +12,7 @@ class Category(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
+        related_name="sub_category",
     )
     slug = models.SlugField(
         _("Slug"), unique=True, blank=False, null=False, max_length=200
