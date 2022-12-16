@@ -19,6 +19,7 @@ class Category(models.Model):
     slug = models.SlugField(
         _("Slug"), unique=True, blank=False, null=False, max_length=200
     )
+    objects = models.Manager()
     sub_categories = SubCategoriesManager()
 
     class Meta:
