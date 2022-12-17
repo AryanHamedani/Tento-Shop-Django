@@ -37,6 +37,13 @@ class Category(models.Model):
         return reverse("shop:product_list_by_category", args=[self.slug])
 
 
+class Material(models.Model):
+    name = models.CharField(_("Name"), max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(SoftDeletableModel, TimeStampedModel):
 
     category = models.ForeignKey(
@@ -49,10 +56,8 @@ class Product(SoftDeletableModel, TimeStampedModel):
     slug = models.SlugField(_("Slug"))
     image = models.ImageField(_("Image"), upload_to="products/%Y/%m/%d")
     description = models.TextField(_("Description"))
-    price = models.DecimalField(
-        _("Price"),
-        max_digits=10,
-        decimal_places=0,
+    material = models.ManyToManyField(
+        Material, verbose_name=_("Material"), related_name="products"
     )
     available = models.BooleanField(_("Available"), default=True)
 
@@ -69,3 +74,65 @@ class Product(SoftDeletableModel, TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse("shop:product_detail", args=[self.id, self.slug])
+
+
+class ProductVariety(SoftDeletableModel, TimeStampedModel):
+    product = models.ForeignKey(
+        Product, verbose_name=_("Product"), on_delete=models.CASCADE
+    )
+    color = models.ForeignKey(
+        "Color", verbose_name=_("Color"), on_delete=models.CASCADE
+    )
+    size = models.ForeignKey("Size", verbose_name=("Size"), on_delete=models.CASCADE)
+    price = models.DecimalField(
+        _("Price"),
+        max_digits=10,
+        decimal_places=0,
+    )
+    quantity = models.PositiveSmallIntegerField(_("Quantity in stock"))
+
+
+class Color(models.Model):
+    name = models.CharField(_("Name"), max_length=50)
+    rgb_hex = models.CharField(_("RGB hex"), max_length=50)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class SizeType(models.Model):
+    category = models.ForeignKey(
+        Category, verbose_name=_("Category"), on_delete=models.CASCADE
+    )
+    name = models.CharField(_("Name"), max_length=50)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class SizeValue(models.Model):
+    type = models.ForeignKey(SizeType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    value = models.CharField(_("Value"), max_length=50)
+
+    class Meta:
+        ordering = ["type"]
+
+    def __str__(self):
+        return self.type
+
+
+class ProductImageGallery:
+    product_variety = models.ForeignKey(
+        ProductVariety, verbose_name=_("Product"), on_delete=models.CASCADE
+    )
+    image = models.ImageField(_("Image"), upload_to="product_image_gallery/")
+    priority = models.PositiveSmallIntegerField(_("Priority"))
+
+    class Meta:
+        ordering = ["-priority"]
