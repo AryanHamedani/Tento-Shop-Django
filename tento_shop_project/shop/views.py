@@ -10,6 +10,7 @@ class ProductListView(generic.View):
         self.category = None
         self.categories = Category.objects.all()
         self.products = Product.objects.filter(available=True)
+        # select_related("category")
         if category_slug:
             self.category = get_object_or_404(Category, slug=category_slug)
             self.products = self.products.filter(
@@ -31,11 +32,8 @@ class ProductDetailView(generic.View):
     context_object_name = "product"
     template_name = "shop/product/detail.html"
 
-    def get_queryset(self):
-
-        return super().get_queryset()
-
     def get(self, request, id, slug):
+        # queryset = self.get_queryset()
         self.product = get_object_or_404(Product, id=id, slug=slug, available=True)
         return render(
             request, "shop/product/detail.html", context={"product": self.product}
