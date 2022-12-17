@@ -341,3 +341,5 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Add cart session id to store user cart items in session
+CART_SESSION_ID = "cart"
