@@ -2,31 +2,25 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
+from mptt.models import MPTTModel, TreeForeignKey
 
-from .managers import CategoryTreeManager
 
-
-class Category(models.Model):
+class Category(MPTTModel):
     name = models.CharField(_("Name"), max_length=200, blank=False, null=False)
-    parent = models.ForeignKey(
+    parent = TreeForeignKey(
         "self",
-        verbose_name=_("Parent Category"),
+        verbose_name=_("Parent"),
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="sub_category",
+        related_name="children",
     )
     slug = models.SlugField(
         _("Slug"), unique=True, blank=False, null=False, max_length=200
     )
-    objects = models.Manager()
-    sub_categories = CategoryTreeManager()
 
-    class Meta:
-        ordering = ["name"]
-        indexes = [
-            models.Index(fields=["name"]),
-        ]
+    class MPTTMeta:
+        order_insertion_by = ["name"]
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
