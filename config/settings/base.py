@@ -83,6 +83,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "phonenumber_field",
+    "mptt",
 ]
 
 LOCAL_APPS = [
