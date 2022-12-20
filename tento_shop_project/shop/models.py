@@ -19,6 +19,18 @@ class Category(MPTTModel):
         _("Slug"), unique=True, blank=False, null=False, max_length=200
     )
 
+    def get_slug_list(self):
+        try:
+            ancestors = self.get_ancestors(include_self=True)
+        except:  # noqa E722
+            ancestors = []
+        else:
+            ancestors = [i.slug for i in ancestors]
+        slugs = []
+        for i in range(len(ancestors)):
+            slugs.append("/".join(ancestors[: i + 1]))
+        return slugs
+
     class MPTTMeta:
         order_insertion_by = ["name"]
 
