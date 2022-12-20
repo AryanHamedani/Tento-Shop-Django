@@ -21,6 +21,11 @@ class Category(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ["name"]
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name"]),
+        ]
         verbose_name = "Category"
         verbose_name_plural = "Categories"
 
