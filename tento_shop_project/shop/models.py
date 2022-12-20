@@ -35,6 +35,10 @@ class Category(MPTTModel):
         order_insertion_by = ["name"]
 
     class Meta:
+        unique_together = (
+            "parent",
+            "slug",
+        )
         indexes = [
             models.Index(fields=["name"]),
         ]

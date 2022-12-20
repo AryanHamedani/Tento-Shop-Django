@@ -48,6 +48,7 @@
 
     <!-- place project specific Javascript in this file -->
     {% endblock javascript %}
+    {% load mptt_tags %}
   </head>
 
   <body>
@@ -90,23 +91,33 @@
                 >
               </li>
               <li class="nav-item">
-                <div class="dropdown">
-                  <a
-                    class="nav-link dropdown-toggle"
+                  <div class="dropdown">
+                      <a
+                      class="nav-link dropdown-toggle"
                     href="#"
                     id="navbarDropdownMenuLink"
                     role="button"
                     data-mdb-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    {% translate 'Categories' %}
-                  </a>
-                  <ul
-                    class="dropdown-menu dropdown-menu-end"
-                    aria-labelledby="navbarDropdownMenuLink"
-                  >
-                    <li>
-                      <a class="dropdown-item" href="#">Some news</a>
+                  {% translate 'Categories' %}
+                </a>
+                <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdownMenuLink"
+                >
+                {% recursetree nodes %}
+                  <li>
+                      {{ node.name }}
+                      {% if not node.is_leaf_node %}
+                          <ul class="children">
+                              {{ children }}
+                          </ul>
+                      {% endif %}
+                  </li>
+                {% endrecursetree %}
+                <li>
+                    <a class="dropdown-item" href="#">Some news</a>
                     </li>
                     <li>
                       <a class="dropdown-item" href="#">Another news</a>
