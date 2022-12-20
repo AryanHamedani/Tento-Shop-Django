@@ -18,117 +18,178 @@
     <link rel="icon" href="{% static 'images/favicons/favicon.ico' %}" />
 
     {% block css %}
-    <!-- Latest compiled and minified Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css"
-      integrity="sha512-GQGU0fMMi238uA+a/bdWJfpUGKUkBdgfFdgBm72SUQ6BeyWjoY/ton0tEjH+OSH9iP4Dfh+7HM0I9f5eR0L/4w=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
     <!-- Third-party CSS libraries go here -->
     <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
     />
-    <!-- Bootstrap core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Google Fonts Roboto -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+    />
+
     <!-- Material Design Bootstrap -->
-    <link href="../css/mdb.min.css" rel="stylesheet" />
+    <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet" />
 
     <!-- This file stores project-specific CSS -->
-    <link href="{% static 'css/project.css' %}" rel="stylesheet" />
     {% endblock %}
     <!-- Le javascript
     ================================================== -->
-    {# Placed at the top of the document so pages load faster with defer #}
-    {% block javascript %}
-    <!-- Bootstrap JS -->
+    {# Placed at the top of the document so pages load faster with defer #} {% block javascript %}
+    <!-- MDB -->
     <script
       defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.min.js"
-      integrity="sha512-OvBgP9A2JBgiRad/mM36mkzXSXaJE9BEIENnVEmeZdITvwT09xnxLtT4twkCa8m/loMbPHsvPl0T8lRGVBwjlQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      type="text/javascript"
+      src="{% static 'js/mdb.min.js' %}"
     ></script>
     <!-- Your stuff: Third-party javascript libraries go here -->
 
     <!-- place project specific Javascript in this file -->
-    <script defer src="{% static 'js/project.js' %}"></script>
-
     {% endblock javascript %}
   </head>
 
   <body>
-    <div class="mb-1">
-      <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
+    <!--Main Navigation-->
+    <header class="mb-5">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Container wrapper -->
+        <div class="container">
+          <!-- Toggle button -->
           <button
-            class="navbar-toggler navbar-toggler-right"
+            class="navbar-toggler"
             type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
-            <span class="navbar-toggler-icon"></span>
+            <i class="fas fa-bars"></i>
           </button>
-          <a class="navbar-brand" href="{% url 'home' %}">Tento Shop Project</a>
 
+          <!-- Navbar brand -->
+          <a class="navbar-brand" href="{% url 'home' %}"
+            >{% translate 'Tento Shop Project' %}</a
+          >
+          <!-- Collapsible wrapper -->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <!-- Left links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item active">
                 <a class="nav-link" href="{% url 'home' %}"
-                  >Home <span class="visually-hidden">(current)</span></a
+                  >{% translate 'Home' %}
+                  <span class="visually-hidden">(current)</span></a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
-              </li>
-              {% if request.user.is_authenticated %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a
-                  class="nav-link"
-                  href="{% url 'users:detail' request.user.username  %}"
-                  >{% translate "My Profile" %}</a
+                <a class="nav-link" href="{% url 'about' %}"
+                  >{% translate 'About' %}</a
                 >
               </li>
               <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a class="nav-link" href="{% url 'account_logout' %}"
-                  >{% translate "Sign Out" %}</a
-                >
+                <div class="dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdownMenuLink"
+                    role="button"
+                    data-mdb-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {% translate 'Categories' %}
+                  </a>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="navbarDropdownMenuLink"
+                  >
+                    <li>
+                      <a class="dropdown-item" href="#">Some news</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">Another news</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </li>
+                  </ul>
+                </div>
               </li>
-              {% else %} {% if ACCOUNT_ALLOW_REGISTRATION %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a
-                  id="sign-up-link"
-                  class="nav-link"
-                  href="{% url 'account_signup' %}"
-                  >{% translate "Sign Up" %}</a
-                >
-              </li>
-              {% endif %}
-              <li class="nav-item">
-                {# URL provided by django-allauth/account/urls.py #}
-                <a
-                  id="log-in-link"
-                  class="nav-link"
-                  href="{% url 'account_login' %}"
-                  >{% translate "Sign In" %}</a
-                >
-              </li>
-              {% endif %}
             </ul>
+            <!-- Left links -->
           </div>
-        </div>
-      </nav>
-    </div>
+          <!-- Collapsible wrapper -->
 
+          <!-- Right elements -->
+          <div class="d-flex align-items-center">
+            <!-- Icon -->
+            <a class="text-reset me-3" href="#">
+              <i class="fas fa-shopping-cart"></i>
+            </a>
+            <!-- Profile -->
+            <div class="dropdown">
+              <a
+                class="dropdown-toggle d-flex align-items-center hidden-arrow text-reset"
+                href="#"
+                id="navbarDropdownMenuAvatar"
+                role="button"
+                data-mdb-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-user"></i>
+              </a>
+              <ul
+                class="dropdown-menu dropdown-menu-end"
+                aria-labelledby="navbarDropdownMenuAvatar"
+              >
+                {% if request.user.is_authenticated %}
+                <li>
+                  {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'users:detail' request.user.username  %}"
+                    >{% translate "My Profile" %}</a
+                  >
+                </li>
+                <li>
+                  {# URL provided by django-allauth/account/urls.py #}
+                  <a class="dropdown-item" href="{% url 'account_logout' %}"
+                    >{% translate "Sign Out" %}</a
+                  >
+                </li>
+                {% else %} {% if ACCOUNT_ALLOW_REGISTRATION %}
+                <li>
+                  {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    id="sign-up-link"
+                    class="dropdown-item"
+                    href="{% url 'account_signup' %}"
+                    >{% translate "Sign Up" %}</a
+                  >
+                </li>
+                {% endif %}
+                <li>
+                  {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    id="log-in-link"
+                    class="dropdown-item"
+                    href="{% url 'account_login' %}"
+                    >{% translate "Sign In" %}</a
+                  >
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+          <!-- Right elements -->
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+      <!-- Navbar -->
+    </header>
+    <!--Main Navigation-->
     <div class="container">
       {% if messages %} {% for message in messages %}
       <div
