@@ -83,7 +83,6 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "phonenumber_field",
-    "mptt",
 ]
 
 LOCAL_APPS = [
@@ -200,6 +199,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "tento_shop_project.users.context_processors.allauth_settings",
+                "tento_shop_project.shop.context_processors.categories",
             ],
         },
     }

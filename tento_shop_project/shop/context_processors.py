@@ -1,8 +1,6 @@
-from django.conf import settings
+from .models import MainCategory
 
 
 def categories(request):
-    """Expose categories in templates."""
-    return {
-        "ACCOUNT_ALLOW_REGISTRATION": settings.ACCOUNT_ALLOW_REGISTRATION,
-    }
+    """Expose some categories in templates."""
+    return {"main_categories": MainCategory.objects.filter()}

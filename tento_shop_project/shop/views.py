@@ -1,40 +1,35 @@
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 from django.views import generic
 
-from .models import Category, Product
+from .models import MainCategory, Product
 
 
-class ProductListView(generic.View):
-    def get(self, request, category_slug=None):
-        self.category = None
-        self.categories = Category.objects.all()
-        self.products = Product.objects.filter(available=True)
-        # select_related("category")
-        if category_slug:
-            self.category = get_object_or_404(Category, slug=category_slug)
-            self.products = self.products.filter(
-                Q(category__in=self.category.sub_category.all())
-                | Q(category=self.category)
-            )
-        return render(
-            request,
-            "shop/product/list.html",
-            context={
-                "category": self.category,
-                "categories": self.categories,
-                "products": self.products,
-            },
-        )
+class ProductListView(generic.ListView):
+    model = Product
+    paginate_by = 9
+    template_name = "shop/product/list.html"
+    context_object_name = "products"
+
+    def get_queryset(self):
+        query_set = super().get_queryset()
+        if self.request.GET.get("category"):
+            return query_set.filter(category__slug=self.request.GET.get("category"))
+        return query_set
 
 
-class ProductDetailView(generic.View):
+class ProductDetailView(generic.DetailView):
+    model = Product
     context_object_name = "product"
     template_name = "shop/product/detail.html"
 
-    def get(self, request, id, slug):
-        # queryset = self.get_queryset()
-        self.product = get_object_or_404(Product, id=id, slug=slug, available=True)
-        return render(
-            request, "shop/product/detail.html", context={"product": self.product}
-        )
+
+class CategoryListView(generic.ListView):
+    model = MainCategory
+    template_name = "shop/category/list.html"
+    context_object_name = "categories"
+
+
+class LandingPageView(generic.View):
+    def get(self, request):
+        latest_products = Product.objects.filter(available=True).order_by("created")[:4]
+        return render(request, "pages/home.html", {"latest_products": latest_products})

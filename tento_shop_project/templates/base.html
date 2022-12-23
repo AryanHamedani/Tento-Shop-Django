@@ -2,13 +2,13 @@
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>{% block title %}Tento Shop Project{% endblock title %}</title>
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{% block title %}Tento Shop Project{% endblock title %}</title>
     <meta
       name="description"
       content="An ecommerce website powered by django."
@@ -24,34 +24,169 @@
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.11.2/css/all.css"
     />
-    <!-- Google Fonts Roboto -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
-    />
-
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
     <!-- Material Design Bootstrap -->
     <link href="{% static 'css/mdb.min.css' %}" rel="stylesheet" />
-
     <!-- This file stores project-specific CSS -->
     {% endblock %}
     <!-- Le javascript
     ================================================== -->
     {# Placed at the top of the document so pages load faster with defer #} {% block javascript %}
-    <!-- MDB -->
+    <!-- Your stuff: Third-party javascript libraries go here -->
+    <!-- JQuery -->
+    <script
+      defer
+      type="text/javascript"
+      src="{% static 'js/jquery-3.4.1.min.js' %}"
+    ></script>
+    <!-- Bootstrap tooltips -->
+    <script
+      defer
+      type="text/javascript"
+      src="{% static 'js/popper.min.js' %}"
+    ></script>
+    <!-- Bootstrap core JavaScript -->
+    <script
+      defer
+      type="text/javascript"
+      src="{% static 'js/bootstrap.min.js' %}"
+    ></script>
+    <!-- MDB core JavaScript -->
     <script
       defer
       type="text/javascript"
       src="{% static 'js/mdb.min.js' %}"
     ></script>
-    <!-- Your stuff: Third-party javascript libraries go here -->
-
     <!-- place project specific Javascript in this file -->
     {% endblock javascript %}
-    {% load mptt_tags %}
   </head>
 
   <body>
+    <!-- Navigation -->
+    <header>
+      <!-- Navbar -->
+      <nav
+        class="navbar fixed-top navbar-expand-lg navbar-light scrolling-navbar white"
+      >
+        <div class="container">
+          <!-- SideNav slide-out button -->
+          {% comment %}
+          <div class="float-left mr-2">
+            <a href="#" data-activates="slide-out" class="button-collapse"
+              ><i class="fas fa-bars"></i
+            ></a>
+          </div>
+          {% endcomment %}
+
+          <a class="navbar-brand font-weight-bold" href="{% url 'home' %}"
+            ><strong>Tento Shop</strong></a
+          >
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarSupportedContent-4"
+            aria-controls="navbarSupportedContent-4"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a
+                  class="nav-link waves-effect waves-light dark-grey-text font-weight-bold"
+                  href="#"
+                  ><i class="fas fa-shopping-cart blue-text"></i>
+
+                  Cart <span class="sr-only">(current)</span></a
+                >
+              </li>
+              <li class="nav-item dropdown ml-3">
+                <a
+                  class="nav-link dropdown-toggle waves-effect waves-light dark-grey-text font-weight-bold"
+                  id="navbarDropdownMenuLink-4"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  ><i class="fas fa-user blue-text"></i> {% if request.user.is_authenticated %} Profile {% else %} Sign-Up /
+                  Login {% endif %}
+                </a>
+
+                <div
+                  class="dropdown-menu dropdown-menu-right dropdown-cyan"
+                  aria-labelledby="navbarDropdownMenuLink-4"
+                >
+                  {% if request.user.is_authenticated %} {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    class="dropdown-item waves-effect waves-light"
+                    href="{% url 'users:detail' request.user.username  %}"
+                    >{% translate "My Profile" %}</a
+                  >
+                  {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    class="dropdown-item waves-effect waves-light"
+                    href="{% url 'account_logout' %}"
+                    >{% translate "Sign Out" %}</a
+                  >
+                  {% else %} {% if ACCOUNT_ALLOW_REGISTRATION %} {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    id="sign-up-link"
+                    class="dropdown-item waves-effect waves-light"
+                    href="{% url 'account_signup' %}"
+                    >{% translate "Sign Up" %}</a
+                  >
+                  {% endif %} {# URL provided by django-allauth/account/urls.py #}
+                  <a
+                    id="log-in-link"
+                    class="dropdown-item waves-effect waves-light"
+                    href="{% url 'account_login' %}"
+                    >{% translate "Sign In" %}</a
+                  >
+                  {% endif %}
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul class="navbar-nav me-auto">
+              {% for category in main_categories %}
+              <li class="nav-item dropdown ml-3">
+                <a
+                  class="nav-link dropdown-toggle waves-effect waves-light dark-grey-text font-weight-bold"
+                  id="navbarDropdownMenuLink-4"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  >{{category.name}}</a
+                >
+
+                <div
+                  class="dropdown-menu dropdown-menu-right dropdown-cyan"
+                  aria-labelledby="navbarDropdownMenuLink-4"
+                >
+                  {% for child in category.children.all %}
+                  <a
+                    class="dropdown-item waves-effect waves-light"
+                    href="{{ child.get_products_url }}"
+                    >{{ child.name }}</a
+                  >
+                  {% endfor %} {% endfor %}
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Navbar -->
+    </header>
+    <!-- Navigation -->
+
     <!--Main Navigation-->
     <header class="mb-5">
       <!-- Navbar -->
@@ -89,44 +224,6 @@
                 <a class="nav-link" href="{% url 'about' %}"
                   >{% translate 'About' %}</a
                 >
-              </li>
-              <li class="nav-item">
-                  <div class="dropdown">
-                      <a
-                      class="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdownMenuLink"
-                    role="button"
-                    data-mdb-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                  {% translate 'Categories' %}
-                </a>
-                <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdownMenuLink"
-                >
-                {% recursetree nodes %}
-                  <li>
-                      {{ node.name }}
-                      {% if not node.is_leaf_node %}
-                          <ul class="children">
-                              {{ children }}
-                          </ul>
-                      {% endif %}
-                  </li>
-                {% endrecursetree %}
-                <li>
-                    <a class="dropdown-item" href="#">Some news</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">Another news</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">Something else here</a>
-                    </li>
-                  </ul>
-                </div>
               </li>
             </ul>
             <!-- Left links -->
@@ -200,33 +297,179 @@
       </nav>
       <!-- Navbar -->
     </header>
-    <!--Main Navigation-->
-    <div class="container">
-      {% if messages %} {% for message in messages %}
-      <div
-        class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }}{% endif %}"
-      >
-        {{ message }}
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-          aria-label="Close"
-        ></button>
-      </div>
-      {% endfor %} {% endif %} {% block content %}
-      <p>Use this document as a way to quick start any new project.</p>
-      {% endblock content %}
-    </div>
-    <!-- /container -->
+    {% block content %} {% endblock content %}
+    <!-- Footer -->
+    <footer
+      class="page-footer text-center text-md-left stylish-color-dark pt-0"
+    >
+      <div style="background-color: #4285f4">
+        <div class="container">
+          <!-- Grid row -->
+          <div class="row py-4 d-flex align-items-center">
+            <!-- Grid column -->
+            <div
+              class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0"
+            >
+              <h6 class="mb-0 white-text">
+                Get connected with us on social networks!
+              </h6>
+            </div>
+            <!-- Grid column -->
 
+            <!-- Grid column -->
+            <div class="col-md-6 col-lg-7 text-center text-md-right">
+              <!-- Facebook -->
+              <a class="fb-ic ml-0 px-2"
+                ><i class="fab fa-facebook-f white-text"> </i
+              ></a>
+
+              <!-- Twitter -->
+              <a class="tw-ic px-2"
+                ><i class="fab fa-twitter white-text"> </i
+              ></a>
+
+              <!-- Google + -->
+              <a class="gplus-ic px-2"
+                ><i class="fab fa-google-plus-g white-text"> </i
+              ></a>
+
+              <!-- Linkedin -->
+              <a class="li-ic px-2"
+                ><i class="fab fa-linkedin-in white-text"> </i
+              ></a>
+
+              <!-- Instagram -->
+              <a class="ins-ic px-2"
+                ><i class="fab fa-instagram white-text"> </i
+              ></a>
+            </div>
+            <!-- Grid column -->
+          </div>
+          <!-- Grid row -->
+        </div>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="container mt-5 mb-4 text-center text-md-left">
+        <div class="row mt-3">
+          <!-- First column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mb-4">
+            <h6 class="text-uppercase font-weight-bold">
+              <strong>Company name</strong>
+            </h6>
+
+            <hr
+              class="blue mb-4 mt-0 d-inline-block mx-auto"
+              style="width: 60px"
+            />
+
+            <p>
+              Here you can use rows and columns here to organize your footer
+              content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+            </p>
+          </div>
+          <!-- First column -->
+
+          <!-- Second column -->
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+            <h6 class="text-uppercase font-weight-bold">
+              <strong>Products</strong>
+            </h6>
+
+            <hr
+              class="blue mb-4 mt-0 d-inline-block mx-auto"
+              style="width: 60px"
+            />
+
+            <p><a href="#!">MDBootstrap</a></p>
+
+            <p><a href="#!">MDWordPress</a></p>
+
+            <p><a href="#!">BrandFlow</a></p>
+
+            <p><a href="#!">Bootstrap Angular</a></p>
+          </div>
+          <!-- Second column -->
+
+          <!-- Third column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <h6 class="text-uppercase font-weight-bold">
+              <strong>Useful links</strong>
+            </h6>
+
+            <hr
+              class="blue mb-4 mt-0 d-inline-block mx-auto"
+              style="width: 60px"
+            />
+
+            <p><a href="#!">Your Account</a></p>
+
+            <p><a href="#!">Become an Affiliate</a></p>
+
+            <p><a href="#!">Shipping Rates</a></p>
+
+            <p><a href="#!">Help</a></p>
+          </div>
+          <!-- Third column -->
+
+          <!-- Fourth column -->
+          <div class="col-md-4 col-lg-3 col-xl-3">
+            <h6 class="text-uppercase font-weight-bold">
+              <strong>Contact</strong>
+            </h6>
+
+            <hr
+              class="blue mb-4 mt-0 d-inline-block mx-auto"
+              style="width: 60px"
+            />
+
+            <p><i class="fas fa-home mr-3"></i> New York, NY 10012, US</p>
+
+            <p><i class="fas fa-envelope mr-3"></i> info@example.com</p>
+
+            <p><i class="fas fa-phone mr-3"></i> + 01 234 567 88</p>
+
+            <p><i class="fas fa-print mr-3"></i> + 01 234 567 89</p>
+          </div>
+          <!-- Fourth column -->
+        </div>
+      </div>
+      <!-- Footer Links -->
+
+      <!-- Copyright -->
+      <div class="footer-copyright py-3 text-center">
+        <div class="container-fluid">
+          © 2022 Copyright:
+          <a
+            href="https://mdbootstrap.com/education/bootstrap/"
+            target="_blank"
+          >
+            MDBootstrap.com
+          </a>
+        </div>
+      </div>
+      <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
     {% block modal %}{% endblock modal %} {% block inline_javascript %} {% comment %} Script tags with only code, no src (defer by default). To run
-    with a "defer" so that you run inline code:
+    with a "defer" so that you run inline code: {% endcomment %}
     <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        /* Run whatever you want */
+      /* WOW.js init */
+      new WOW().init();
+
+      // Tooltips Initialization
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
       });
+
+      // Material Select Initialization
+      $(document).ready(function () {
+        $(".mdb-select").materialSelect();
+      });
+
+      // SideNav Initialization
+      $(".button-collapse").sideNav();
     </script>
-    {% endcomment %} {% endblock inline_javascript %}
+    {% endblock inline_javascript %}
   </body>
 </html>
