@@ -1,10 +1,10 @@
-from django.db import models  # noqa F401
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils import Choices
 from model_utils.fields import MonitorField, StatusField
 from model_utils.models import TimeStampedModel
 
-from tento_shop_project.products.models import ProductItem
+from tento_shop_project.products.models import ProductVariety
 from tento_shop_project.users.models import User
 
 
@@ -16,13 +16,16 @@ class Order(TimeStampedModel):
         (2, "SUCCESS", _("Customer received order successfully")),
     )
     owner = models.ForeignKey(
-        User, verbose_name=_("Order Owner"), on_delete=models.CASCADE
+        User,
+        verbose_name=_("Order Owner"),
+        on_delete=models.CASCADE,
+        related_name="orders",
     )
     status = StatusField(verbose_name=_("Order Status"))
     status_changed = MonitorField(
         verbose_name=_("Order status change date"), monitor="status"
     )
-    description = models.TextField(_("Order Description"))
+    description = models.TextField(_("Order Description"), blank=True)
     total_price = models.DecimalField(
         _("Total Price"),
         max_digits=10,
@@ -41,10 +44,15 @@ class Order(TimeStampedModel):
     )
 
 
-class OrderLine(models.Model):
-    order = models.ForeignKey(Order, verbose_name=_("Order"), on_delete=models.CASCADE)
+class OrderItem(models.Model):
+    order = models.ForeignKey(
+        Order, verbose_name=_("Order"), on_delete=models.CASCADE, related_name="items"
+    )
     item = models.ForeignKey(
-        ProductItem, verbose_name=_("Product Item"), on_delete=models.CASCADE
+        ProductVariety,
+        verbose_name=_("Product Item"),
+        on_delete=models.CASCADE,
+        related_name="orders",
     )
     price = models.DecimalField(
         _("Price"),
