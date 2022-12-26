@@ -79,6 +79,7 @@ class ProductAdmin(admin.ModelAdmin):
         "price",
     ]
     list_editable = ["available"]
+    # search_fields = ["name"]
     prepopulated_fields = {"slug": ("name",)}
 
 
