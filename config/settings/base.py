@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "tento_shop_project"
 env = environ.Env()
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
@@ -87,12 +87,14 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "tento_shop_project.users",
-    "tento_shop_project.addresses",
-    "tento_shop_project.products",
-    "tento_shop_project.core",
-    "tento_shop_project.orders",
-    "tento_shop_project.reviews",
-    "tento_shop_project.promotions",
+    "tento_shop_project.shop",
+    "tento_shop_project.cart",
+    # "tento_shop_project.addresses",
+    # "tento_shop_project.products",
+    # "tento_shop_project.core",
+    # "tento_shop_project.orders",
+    # "tento_shop_project.reviews",
+    # "tento_shop_project.promotions",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -197,6 +199,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "tento_shop_project.users.context_processors.allauth_settings",
+                "tento_shop_project.shop.context_processors.categories",
             ],
         },
     }
@@ -340,3 +343,5 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Add cart session id to store user cart items in session
+CART_SESSION_ID = "cart"
