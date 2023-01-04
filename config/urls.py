@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
@@ -14,14 +15,21 @@ urlpatterns = [
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
+    path("i18n/", include("django.conf.urls.i18n")),
+    # Grappelli URLS
+    path("grappelli/", include("grappelli.urls")),
+    path("grappelli-docs/", include("grappelli.urls_docs")),  # grappelli docs URLS
     # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("tento_shop_project.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("", include("tento_shop_project.shop.urls", namespace="shop")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += i18n_patterns(
+    path(settings.ADMIN_URL, admin.site.urls),
+)
 
 # API URLS
 urlpatterns += [
