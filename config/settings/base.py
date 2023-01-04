@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     "phonenumber_field",
 ]
 
+
 LOCAL_APPS = [
     "tento_shop_project.users",
     "tento_shop_project.shop",
