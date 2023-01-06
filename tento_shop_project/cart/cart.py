@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from tento_shop_project.shop.models import Product
+from tento_shop_project.shop.models import ProductVariety
 
 
 class Cart:
@@ -34,7 +34,7 @@ class Cart:
 
     def __iter__(self):
         product_ids = self.cart.keys()
-        products = Product.objects.filter(id__in=product_ids)
+        products = ProductVariety.objects.filter(id__in=product_ids)
         cart = self.cart.copy()
         for product in products:
             cart[str(product.id)]["product"] = product
