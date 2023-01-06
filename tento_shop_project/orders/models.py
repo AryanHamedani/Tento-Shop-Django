@@ -11,9 +11,9 @@ from tento_shop_project.users.models import User
 # Create your models here.
 class Order(TimeStampedModel):
     STATUS = Choices(
-        (0, "PENDING", _("Pending for payment")),
-        (1, "SUBMITTED", _("Order paid and submitted")),
-        (2, "SUCCESS", _("Customer received order successfully")),
+        ("PENDING", _("Pending for payment")),
+        ("SUBMITTED", _("Order paid and submitted")),
+        ("SUCCESS", _("Customer received order successfully")),
     )
     owner = models.ForeignKey(
         User,

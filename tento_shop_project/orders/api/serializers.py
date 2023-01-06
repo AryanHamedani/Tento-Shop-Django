@@ -5,7 +5,7 @@ from tento_shop_project.orders import models
 
 class OrderSerializer(serializers.ModelSerializer):
     owner = serializers.StringRelatedField(read_only=True)
-    items = serializers.StringRelatedField(read_only=True, many=True)
+    items = serializers.SlugRelatedField(read_only=True, many=True, slug_field="price")
     # total_quantity = serializers.
 
     class Meta:
@@ -18,6 +18,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "final_price",
             "created",
             "modified",
+            "items",
+            "owner",
         ]
 
         # extra_kwargs = {

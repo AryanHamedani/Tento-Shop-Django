@@ -12,7 +12,7 @@ else:
 
 router.register("users", UserViewSet)
 router.register("shop", ProductViewSet)
-router.register("orders", OrderViewSet)
+router.register("orders", OrderViewSet, basename="orders")
 
 
 app_name = "api"

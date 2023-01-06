@@ -198,6 +198,10 @@ class ProductVariety(SoftDeletableModel, TimeStampedModel):
     )
     quantity = models.PositiveSmallIntegerField(_("Quantity in stock"))
 
+    @property
+    def price(self):
+        return self.product.price
+
     class Meta:
         ordering = ["-product"]
         verbose_name_plural = "Product Varieties"

@@ -6,6 +6,7 @@ from tento_shop_project.shop import models
 class ProductSerializer(serializers.ModelSerializer):
     brand = serializers.StringRelatedField(read_only=True)
     material = serializers.StringRelatedField(read_only=True, many=True)
+    price = serializers.DecimalField(max_digits=10, decimal_places=0)
     # total_quantity = serializers.
 
     class Meta:
@@ -25,3 +26,13 @@ class ProductSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "url": {"view_name": "api:product-detail", "lookup_field": "slug"}
         }
+
+
+class ProductVarietySerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    color = serializers.StringRelatedField(read_only=True)
+    size = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = models.ProductVariety
+        fields = ["product", "color", "size"]

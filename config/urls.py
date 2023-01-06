@@ -45,6 +45,7 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    path("api/cart/", include("tento_shop_project.cart.api.urls", namespace="cart")),
 ]
 
 if settings.DEBUG:

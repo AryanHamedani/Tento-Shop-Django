@@ -99,7 +99,7 @@ LOCAL_APPS = [
     # "tento_shop_project.addresses",
     # "tento_shop_project.products",
     # "tento_shop_project.core",
-    # "tento_shop_project.orders",
+    "tento_shop_project.orders",
     # "tento_shop_project.reviews",
     # "tento_shop_project.promotions",
 ]
@@ -335,7 +335,7 @@ REST_FRAMEWORK = {
         # "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
