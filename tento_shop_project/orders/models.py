@@ -4,7 +4,7 @@ from model_utils import Choices
 from model_utils.fields import MonitorField, StatusField
 from model_utils.models import TimeStampedModel
 
-from tento_shop_project.products.models import ProductVariety
+from tento_shop_project.shop.models import ProductVariety
 from tento_shop_project.users.models import User
 
 
