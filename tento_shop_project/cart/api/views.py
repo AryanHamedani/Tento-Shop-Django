@@ -27,7 +27,7 @@ class CartView(APIView):
     def post(self, request, product_id):
         cart = Cart(request=request)
         try:
-            product_variety = ProductVariety.objects.get(product_id)
+            product_variety = ProductVariety.objects.get(id=product_id)
         except ProductVariety.DoesNotExist:
             return Response({"message": "Product Does Not Exist"}, 404)
         else:

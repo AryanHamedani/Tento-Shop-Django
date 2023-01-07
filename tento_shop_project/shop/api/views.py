@@ -17,12 +17,3 @@ class ProductViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "slug"
-
-    # def get_queryset(self, *args, **kwargs):
-
-    #     return self.queryset.filter(id=self.request.user.id)
-
-    # @action(detail=False)
-    # def me(self, request):
-    #     serializer = UserSerializer(request.user, context={"request": request})
-    #     return Response(status=status.HTTP_200_OK, data=serializer.data)

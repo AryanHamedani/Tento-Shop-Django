@@ -7,6 +7,7 @@ class ProductSerializer(serializers.ModelSerializer):
     brand = serializers.StringRelatedField(read_only=True)
     material = serializers.StringRelatedField(read_only=True, many=True)
     price = serializers.DecimalField(max_digits=10, decimal_places=0)
+    category = serializers.StringRelatedField(read_only=True)
     # total_quantity = serializers.
 
     class Meta:

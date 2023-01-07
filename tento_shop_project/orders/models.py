@@ -65,3 +65,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(
         _("Ordered Quantity"), blank=False, null=False
     )
+
+    def save(self, *args, **kwargs):
+        self.item.quantity -= self.quantity
+        super().save(*args, **kwargs)
