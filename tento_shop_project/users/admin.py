@@ -31,3 +31,13 @@ class UserAdmin(auth_admin.UserAdmin):
     )
     list_display = ["phone_number", "is_superuser"]
     search_fields = ["phone_number"]
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("phone_number", "password1", "password2"),
+            },
+        ),
+    )
+    ordering = ("phone_number",)
