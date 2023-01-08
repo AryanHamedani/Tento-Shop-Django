@@ -8,7 +8,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    phone_number = PhoneNumberField(
+    email = models.EmailField(
+        verbose_name=_("Email"), blank=True, null=True, unique=True
+    )
+    username = PhoneNumberField(
         region="IR",
         verbose_name=_("Phone Number"),
         unique=True,
@@ -34,7 +37,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = "phone_number"
+    USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -42,7 +45,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = _("users")
 
     def __str__(self):
-        _str = f"{self.id} {self.phone_number}"
+        _str = f"{self.id} {self.username}"
         return _str.strip()
 
     def get_absolute_url(self):

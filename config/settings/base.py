@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    "djoser",
     "corsheaders",
     "drf_spectacular",
     "phonenumber_field",
@@ -354,3 +355,13 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 # Add cart session id to store user cart items in session
 CART_SESSION_ID = "cart"
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("JWT",),
+}
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "#/username/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "#/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+    "SERIALIZERS": {},
+}
