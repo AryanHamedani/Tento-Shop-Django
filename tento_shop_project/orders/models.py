@@ -2,14 +2,14 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils import Choices
 from model_utils.fields import MonitorField, StatusField
-from model_utils.models import TimeStampedModel
+from model_utils.models import SoftDeletableModel, TimeStampedModel
 
-from tento_shop_project.shop.models import ProductVariety
+from tento_shop_project.products.models import Product
 from tento_shop_project.users.models import User
 
 
 # Create your models here.
-class Order(TimeStampedModel):
+class Order(TimeStampedModel, SoftDeletableModel):
     STATUS = Choices(
         ("PENDING", _("Pending for payment")),
         ("SUBMITTED", _("Order paid and submitted")),
@@ -43,13 +43,19 @@ class Order(TimeStampedModel):
         default=0,
     )
 
+    def save(self, *args, **kwargs):
+        if self.status == "SUBMITTED":
+            for item in self.items.all():
+                item.item.quantity -= item.quantity
+        super().save(*args, **kwargs)
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
         Order, verbose_name=_("Order"), on_delete=models.CASCADE, related_name="items"
     )
     item = models.ForeignKey(
-        ProductVariety,
+        Product,
         verbose_name=_("Product Item"),
         on_delete=models.CASCADE,
         related_name="orders",
@@ -65,7 +71,3 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(
         _("Ordered Quantity"), blank=False, null=False
     )
-
-    def save(self, *args, **kwargs):
-        self.item.quantity -= self.quantity
-        super().save(*args, **kwargs)

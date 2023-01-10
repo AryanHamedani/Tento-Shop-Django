@@ -5,7 +5,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from tento_shop_project.cart.cart import Cart  # Noqa 401
 from tento_shop_project.orders.models import Order, OrderItem  # Noqa 401
-from tento_shop_project.shop.models import ProductVariety  # Noqa 401
+from tento_shop_project.products.models import Product  # Noqa 401
 
 from .serializers import OrderSerializer
 

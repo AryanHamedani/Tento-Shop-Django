@@ -1,60 +1,34 @@
+import uuid
+
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
+from mptt.models import MPTTModel, TreeForeignKey
 
 
-class MainCategory(models.Model):
+class Category(MPTTModel):
     name = models.CharField(
-        _("Name"), max_length=50, blank=False, null=False, unique=True
+        _("Name"),
+        max_length=50,
+        blank=False,
+        null=False,
     )
+    parent = TreeForeignKey(
+        "self", on_delete=models.PROTECT, null=True, blank=True, related_name="children"
+    )
+
+    class MPTTMeta:
+        order_insertion_by = ["name"]
 
     class Meta:
-        indexes = [
-            models.Index(fields=["name"]),
-        ]
-        verbose_name = "Main Category"
-        verbose_name_plural = "Main Categories"
-
-    def __str__(self):
-        return self.name
-
-    def product_count(self):
-        return sum([child.products.count() for child in self.children.all()])
-
-    def sub_category_count(self):
-        return self.children.count()
-
-
-class SubCategory(models.Model):
-    name = models.CharField(_("Name"), max_length=50, blank=False, null=False)
-    parent = models.ForeignKey(
-        MainCategory,
-        verbose_name=_("Parent"),
-        related_name="children",
-        on_delete=models.CASCADE,
-    )
-    slug = models.SlugField(
-        _("Slug"), unique=True, blank=False, null=False, max_length=200
-    )
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["name"]),
-        ]
-        verbose_name = "Sub Category"
-        verbose_name_plural = "Sub Categories"
-
-    def __str__(self):
-        return self.name
-
-    def get_products_url(self):
-        return "{base}?category={slug}".format(
-            base=reverse("shop:product_list"), slug=self.slug
+        unique_together = (
+            "name",
+            "parent",
         )
 
-    def product_count(self):
-        return self.products.count()
+    def __str__(self):
+        return self.name
 
 
 class Color(models.Model):
@@ -67,14 +41,8 @@ class Color(models.Model):
     def __str__(self):
         return self.name
 
-    def product_variety_count(self):
-        return self.product_varieties.count()
-
 
 class SizeType(models.Model):
-    category = models.ForeignKey(
-        SubCategory, verbose_name=_("Category"), on_delete=models.CASCADE
-    )
     name = models.CharField(_("Name"), max_length=50)
 
     class Meta:
@@ -85,17 +53,14 @@ class SizeType(models.Model):
 
 
 class SizeValue(models.Model):
-    type = models.ForeignKey(SizeType, verbose_name=_("Type"), on_delete=models.CASCADE)
+    type = models.ForeignKey(SizeType, verbose_name=_("Type"), on_delete=models.PROTECT)
     value = models.CharField(_("Value"), max_length=50)
 
     class Meta:
         ordering = ["type"]
 
     def __str__(self):
-        return str(self.type) + self.value
-
-    def product_variety_count(self):
-        return self.product_varieties.count()
+        return f"{str(self.type)} : {self.value}"
 
 
 class Material(models.Model):
@@ -104,31 +69,24 @@ class Material(models.Model):
     def __str__(self):
         return self.name
 
-    def product_count(self):
-        return self.products.count()
-
 
 class Brand(models.Model):
     name = models.CharField(_("Name"), max_length=50)
     logo = models.ImageField(_("Logo"), upload_to="brand_logos/")
-    slug = models.SlugField(_("Slug"))
 
     def __str__(self):
         return self.name
 
-    def product_count(self):
-        return self.products.count()
-
 
 class Product(SoftDeletableModel, TimeStampedModel):
     category = models.ForeignKey(
-        SubCategory,
+        Category,
         verbose_name=_("Category"),
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="products",
     )
     name = models.CharField(_("Name"), max_length=50)
-    slug = models.SlugField(_("Slug"))
+    slug = models.SlugField(_("Slug"), unique=True)
     image = models.ImageField(_("Image"), upload_to="products/thumbnail/%Y/%m/%d")
     description = models.TextField(_("Description"))
     material = models.ManyToManyField(
@@ -141,11 +99,10 @@ class Product(SoftDeletableModel, TimeStampedModel):
         on_delete=models.CASCADE,
         related_name="products",
     )
-    price = models.DecimalField(
-        _("Price"),
-        max_digits=10,
-        decimal_places=0,
-    )
+    # price = models.DecimalField(
+    #     _("Price"), max_digits=10, decimal_places=0, null=False, blank=False
+    # )
+    # quantity = models.PositiveSmallIntegerField(_("Quantity in stock"))
 
     class Meta:
         ordering = ["name"]
@@ -158,42 +115,59 @@ class Product(SoftDeletableModel, TimeStampedModel):
     def __str__(self):
         return self.name
 
-    def is_in_stock(self):
-        for variety in self.product_varieties.all():
-            if variety.quantity > 0:
-                return True
-        return False
+    # def is_in_stock(self):
+    #     for variety in self.product_varieties.all():
+    #         if variety.quantity > 0:
+    #             return True
+    #     return False
+
+    # def available_colors(self):
+    #     return [
+    #         {"color": variety.color.name, "rgb_hex": variety.color.rgb_hex}
+    #         for variety in self.product_varieties.filter(quantity__gt=0)
+    #     ]
+
+    # def total_stock_quantity(self):
+    #     return sum([variety.quantity for variety in self.product_varieties.all()])
 
     def get_absolute_url(self):
-        return reverse("shop:product_detail", args=[self.id, self.slug])
+        return f"product/{self.slug}/"
 
-    def available_colors(self):
-        return [variety.color.name for variety in self.product_varieties.all()]
+    def get_image_url(self):
+        return "http://127.0.0.1:8000" + self.image.url
 
-    def available_sizes(self):
-        return [variety.size.value for variety in self.product_varieties.all()]
-
-    def total_stock_quantity(self):
-        return sum([variety.quantity for variety in self.product_varieties.all()])
+    # @property
+    # def price(self):
+    #     return self.product_varieties.order_by("price").first().price
 
 
 class ProductVariety(SoftDeletableModel, TimeStampedModel):
+    price = models.DecimalField(
+        _("Price"), max_digits=10, decimal_places=0, null=False, blank=False
+    )
+    sku = models.UUIDField(
+        _("SKU"),
+        default=uuid.uuid4,
+        editable=False,
+        primary_key=True,
+        auto_created=True,
+    )
     product = models.ForeignKey(
         Product,
         verbose_name=_("Product"),
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="product_varieties",
     )
     color = models.ForeignKey(
         Color,
         verbose_name=_("Color"),
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="product_varieties",
     )
     size = models.ForeignKey(
         SizeValue,
         verbose_name=("Size"),
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="product_varieties",
     )
     quantity = models.PositiveSmallIntegerField(_("Quantity in stock"))
@@ -203,18 +177,17 @@ class ProductVariety(SoftDeletableModel, TimeStampedModel):
         verbose_name_plural = "Product Varieties"
 
 
-class ProductImageGallery(TimeStampedModel):
-    product = models.ForeignKey(
-        Product,
-        verbose_name=_("Product"),
-        on_delete=models.CASCADE,
-        related_name="images",
-    )
-    image = models.ImageField(
-        _("Image"), upload_to="products/product_image_gallery/%Y/%m/%d"
-    )
-    priority = models.PositiveSmallIntegerField(_("Priority"))
+# class ProductImageGallery(TimeStampedModel):
+#     product = models.ForeignKey(
+#         Product,
+#         verbose_name=_("Product"),
+#         on_delete=models.CASCADE,
+#         related_name="images",
+#     )
+#     image = models.ImageField(
+#         _("Image"), upload_to="products/product_image_gallery/%Y/%m/%d"
+#     )
 
-    class Meta:
-        ordering = ["-priority"]
-        verbose_name_plural = "Product Images Gallery"
+#     class Meta:
+#         ordering = ["-product"]
+#         verbose_name_plural = "Product Images Gallery"

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render  # noqa F401
 from django.views import generic
 
-from tento_shop_project.shop.models import Product
+from tento_shop_project.products.models import Product
 
 from .cart import Cart
 from .forms import CartAddProductForm

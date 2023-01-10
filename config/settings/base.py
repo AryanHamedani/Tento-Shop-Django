@@ -79,9 +79,6 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
@@ -90,17 +87,18 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "phonenumber_field",
     "rest_framework_simplejwt",
+    "mptt",
 ]
 
 
 LOCAL_APPS = [
     "tento_shop_project.users",
-    "tento_shop_project.shop",
-    "tento_shop_project.cart",
+    # "tento_shop_project.shop",
+    # "tento_shop_project.cart",
     # "tento_shop_project.addresses",
-    # "tento_shop_project.products",
+    "tento_shop_project.products",
     # "tento_shop_project.core",
-    "tento_shop_project.orders",
+    # "tento_shop_project.orders",
     # "tento_shop_project.reviews",
     # "tento_shop_project.promotions",
 ]
@@ -207,8 +205,6 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.request",
-                "tento_shop_project.users.context_processors.allauth_settings",
-                "tento_shop_project.shop.context_processors.categories",
             ],
         },
     }
@@ -365,3 +361,9 @@ DJOSER = {
     "SEND_ACTIVATION_EMAIL": True,
     "SERIALIZERS": {},
 }
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]

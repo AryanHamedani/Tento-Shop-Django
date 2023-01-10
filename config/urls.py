@@ -8,10 +8,9 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from tento_shop_project.shop.views import LandingPageView
+from tento_shop_project.products.api.views import search
 
 urlpatterns = [
-    path("home/", LandingPageView.as_view(), name="home"),
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
@@ -20,11 +19,10 @@ urlpatterns = [
     path("grappelli/", include("grappelli.urls")),
     path("grappelli-docs/", include("grappelli.urls_docs")),  # grappelli docs URLS
     # Django Admin, use {% url 'admin:index' %}
+    path("admin/", admin.site.urls),
     # User management
     path("users/", include("tento_shop_project.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("", include("tento_shop_project.shop.urls", namespace="shop")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += i18n_patterns(
@@ -47,7 +45,8 @@ urlpatterns += [
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
-    path("api/cart/", include("tento_shop_project.cart.api.urls", namespace="cart")),
+    path("api/products/search/", search, name="product-search")
+    # path("api/cart/", include("tento_shop_project.cart.api.urls", namespace="cart")),
 ]
 
 if settings.DEBUG:

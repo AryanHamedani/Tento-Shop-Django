@@ -1,4 +1,9 @@
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    AbstractUser,
+    PermissionsMixin,
+    UserManager,
+)
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from django.urls import reverse
@@ -7,38 +12,9 @@ from model_utils.models import SoftDeletableModel, TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(
-        verbose_name=_("Email"), blank=True, null=True, unique=True
-    )
-    username = PhoneNumberField(
-        region="IR",
-        verbose_name=_("Phone Number"),
-        unique=True,
-        help_text=_("Required. Iranian Phone Number format."),
-        error_messages={
-            "unique": _("A user with that phone number already exists."),
-        },
-    )
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
-    is_active = models.BooleanField(
-        _("active"),
-        default=False,
-        help_text=_(
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
-        ),
-    )
-    date_joined = models.DateTimeField(_("date joined"), auto_now_add=True)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = []
+class User(AbstractUser):
+    first_name = None
+    last_name = None
 
     class Meta:
         verbose_name = _("user")
@@ -53,11 +29,21 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.is_active:
+        if self.is_active and not Profile.objects.filter(owner=self).exists():
             Profile.objects.create(owner=self)
 
 
 class Profile(SoftDeletableModel, TimeStampedModel):
+    phone = PhoneNumberField(
+        region="IR",
+        verbose_name=_("Phone Number"),
+        unique=True,
+        help_text=_("Required. Iranian Phone Number format."),
+        error_messages={
+            "unique": _("A user with that phone number already exists."),
+        },
+    )
+
     class Gender(models.IntegerChoices):
         MALE = 0, _("Male")
         FEMALE = 1, _("Female")

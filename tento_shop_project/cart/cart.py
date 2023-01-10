@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from tento_shop_project.shop.models import ProductVariety
+from tento_shop_project.products.models import ProductVariety
 
 
 class Cart:
