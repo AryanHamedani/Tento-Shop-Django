@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 APPS_DIR = ROOT_DIR / "tento_shop_project"
 env = environ.Env()
 
-READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
@@ -24,6 +24,10 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
 TIME_ZONE = "Asia/Tehran"
+LANGUAGES = (
+    ("en-us", "English (US)"),
+    ("fa", "فارسی"),
+)
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
@@ -68,31 +72,35 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     # "django.contrib.humanize", # Handy template tags
+    "grappelli",
     "django.contrib.admin",
     "django.forms",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    "djoser",
     "corsheaders",
     "drf_spectacular",
     "phonenumber_field",
+    "rest_framework_simplejwt",
+    "mptt",
 ]
+
 
 LOCAL_APPS = [
     "tento_shop_project.users",
-    "tento_shop_project.addresses",
+    # "tento_shop_project.shop",
+    # "tento_shop_project.cart",
+    # "tento_shop_project.addresses",
     "tento_shop_project.products",
-    "tento_shop_project.core",
-    "tento_shop_project.orders",
-    "tento_shop_project.reviews",
-    "tento_shop_project.promotions",
+    # "tento_shop_project.core",
+    # "tento_shop_project.orders",
+    # "tento_shop_project.reviews",
+    # "tento_shop_project.promotions",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -156,7 +164,7 @@ MIDDLEWARE = [
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = str(ROOT_DIR / "staticfiles")
+STATIC_ROOT = ROOT_DIR / "static"
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
@@ -192,11 +200,11 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.template.context_processors.i18n",
-                "django.template.context_processors.media",
                 "django.template.context_processors.static",
+                "django.template.context_processors.media",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "tento_shop_project.users.context_processors.allauth_settings",
+                "django.template.context_processors.request",
             ],
         },
     }
@@ -320,10 +328,11 @@ SOCIALACCOUNT_FORMS = {"signup": "tento_shop_project.users.forms.UserSocialSignu
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.TokenAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -340,3 +349,21 @@ SPECTACULAR_SETTINGS = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+# Add cart session id to store user cart items in session
+CART_SESSION_ID = "cart"
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("JWT",),
+}
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
+    "USERNAME_RESET_CONFIRM_URL": "#/username/reset/confirm/{uid}/{token}",
+    "ACTIVATION_URL": "#/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+    "SERIALIZERS": {},
+}
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]

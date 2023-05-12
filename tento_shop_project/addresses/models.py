@@ -1,11 +1,10 @@
-from django.db import models  # noqa F401
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from tento_shop_project.core.models import AddressModel
 from tento_shop_project.users.models import User
 
 
-# Create your models here.
 class Province(models.Model):
     name = models.CharField(
         _("Province name"), max_length=50, blank=False, null=False, unique=True

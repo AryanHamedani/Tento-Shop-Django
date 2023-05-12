@@ -1,37 +1,52 @@
 from django.conf import settings
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from tento_shop_project.products.api.views import search
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
     ),
+    path("i18n/", include("django.conf.urls.i18n")),
+    # Grappelli URLS
+    path("grappelli/", include("grappelli.urls")),
+    path("grappelli-docs/", include("grappelli.urls_docs")),  # grappelli docs URLS
     # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
+    path("admin/", admin.site.urls),
     # User management
     path("users/", include("tento_shop_project.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += i18n_patterns(
+    path(settings.ADMIN_URL, admin.site.urls),
+)
 
 # API URLS
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
     # DRF auth token
-    path("auth-token/", obtain_auth_token),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    # path("auth-token/", obtain_auth_token),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/auth/", include("djoser.urls")),
+    path("api/auth/", include("djoser.urls.jwt")),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
     ),
+    path("api/products/search/", search, name="product-search")
+    # path("api/cart/", include("tento_shop_project.cart.api.urls", namespace="cart")),
 ]
 
 if settings.DEBUG:
@@ -59,3 +74,7 @@ if settings.DEBUG:
         import debug_toolbar
 
         urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+
+admin.site.site_header = "Tento Shop Admin"
+admin.site.site_title = "Tento Shop Admin Portal"
+admin.site.index_title = "Welcome to Tento Shop Admin Portal"
